@@ -17,11 +17,12 @@ jobs:
       - name: Obtener codigo
         uses: actions/checkout@v4
 
-      - name: Definir nombre de imagen
+      - name: Definir nombres de imagenes
         id: image
         shell: bash
         run: |
           echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+          echo "kevinesteban/dds-practica-devops" >> "$GITHUB_OUTPUT"
 
       - name: Construir imagen Docker
         run: docker build -t dds-devops-demo:test .
@@ -42,18 +43,35 @@ jobs:
           exit 1
 
       - name: Autenticarse en GHCR
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Autenticarse en Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Etiquetar imagen
+      # --- NUEVO: Etiquetado y Push múltiple (latest y commit SHA) ---
+      - name: Etiquetar y Publicar en GHCR
         run: |
-          docker tag dds-devops-demo:test \
-            ${{ steps.image.outputs.name }}:${GITHUB_SHA::7}
+          # Tag commit
+          docker tag dds-devops-demo:test ${{ steps.image.outputs.ghcr_name }}:${GITHUB_SHA::7}
+          docker push ${{ steps.image.outputs.ghcr_name }}:${GITHUB_SHA::7}
+          
+          # Tag latest
+          docker tag dds-devops-demo:test ${{ steps.image.outputs.ghcr_name }}:latest
+          docker push ${{ steps.image.outputs.ghcr_name }}:latest
 
-      - name: Publicar imagen en GHCR
+      - name: Etiquetar y Publicar en Docker Hub
         run: |
-          docker push \
-            ${{ steps.image.outputs.name }}:${GITHUB_SHA::7}
+          # Tag commit
+          docker tag dds-devops-demo:test ${{ steps.image.outputs.dockerhub_name }}:${GITHUB_SHA::7}
+          docker push ${{ steps.image.outputs.dockerhub_name }}:${GITHUB_SHA::7}
+          
+          # Tag latest
+          docker tag dds-devops-demo:test ${{ steps.image.outputs.dockerhub_name }}:latest
+          docker push ${{ steps.image.outputs.dockerhub_name }}:latest
