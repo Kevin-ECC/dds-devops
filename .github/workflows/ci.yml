@@ -58,10 +58,24 @@ jobs:
       # --- NUEVO: Etiquetado y Push múltiple (latest y commit SHA) ---
       - name: Etiquetar y Publicar en GHCR
         run: |
-          docker tag dds-devops-demo:test ${{ steps.image.outputs.ghcr_name }}:latest
-          docker push ${{ steps.image.outputs.ghcr_name }}:latest
+          GHCR_IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          
+          # Tag commit
+          docker tag dds-devops-demo:test "${GHCR_IMAGE}:${GITHUB_SHA::7}"
+          docker push "${GHCR_IMAGE}:${GITHUB_SHA::7}"
+          
+          # Tag latest
+          docker tag dds-devops-demo:test "${GHCR_IMAGE}:latest"
+          docker push "${GHCR_IMAGE}:latest"
 
       - name: Etiquetar y Publicar en Docker Hub
         run: |
-          docker tag dds-devops-demo:test ${{ steps.image.outputs.dockerhub_name }}:latest
-          docker push ${{ steps.image.outputs.dockerhub_name }}:latest
+          DOCKERHUB_IMAGE="tu-usuario-dockerhub/dds-devops-demo"
+          
+          # Tag commit
+          docker tag dds-devops-demo:test "${DOCKERHUB_IMAGE}:${GITHUB_SHA::7}"
+          docker push "${DOCKERHUB_IMAGE}:${GITHUB_SHA::7}"
+          
+          # Tag latest
+          docker tag dds-devops-demo:test "${DOCKERHUB_IMAGE}:latest"
+          docker push "${DOCKERHUB_IMAGE}:latest"
