@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-          echo "kevinesteban/dds-practica-devops" >> "$GITHUB_OUTPUT"
+          echo "dockerhub_name=kevinesteban/dds-practica-devops" >> "$GITHUB_OUTPUT"
 
       - name: Construir imagen Docker
         run: docker build -t dds-devops-demo:test .
