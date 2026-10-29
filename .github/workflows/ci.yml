@@ -70,7 +70,7 @@ jobs:
 
       - name: Etiquetar y Publicar en Docker Hub
         run: |
-          DOCKERHUB_IMAGE="tu-usuario-dockerhub/dds-devops-demo"
+          DOCKERHUB_IMAGE="kevinesteban/dds-practica-devops"
           
           # Tag commit
           docker tag dds-devops-demo:test "${DOCKERHUB_IMAGE}:${GITHUB_SHA::7}"
