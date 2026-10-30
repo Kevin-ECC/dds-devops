@@ -33,7 +33,8 @@ jobs:
             -p 127.0.0.1:8080:80 \
             dds-devops-demo:test
           for i in $(seq 1 15); do
-            if curl -fsS http://127.0.0.1:8080/ | grep -q "Hola DevOps"; then
+            if curl -fsS http://127.0.0.1:8080/ | grep -q "El fascinante mundo del ajedrez" \
+              && curl -fsS http://127.0.0.1:8080/styles.css | grep -q -- "--background: #111827"; then
               echo "Prueba exitosa"
               exit 0
             fi
