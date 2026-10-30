@@ -79,3 +79,6 @@ jobs:
           # Tag latest
           docker tag dds-devops-demo:test "${DOCKERHUB_IMAGE}:latest"
           docker push "${DOCKERHUB_IMAGE}:latest"
+      - name: Disparar Deploy en Render
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
